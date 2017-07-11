@@ -1,0 +1,27 @@
+{
+  "name": "inhere/process",
+  "type": "library",
+  "description": "a simple process library of the php",
+  "keywords": ["library","process"],
+  "homepage": "http://github.com/inhere/php-process",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "inhere",
+      "email": "in.798@qq.com",
+      "homepage": "http://www.yzone.net/"
+    }
+  ],
+  "require": {
+    "php": ">=7.0.0",
+    "inhere/library": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "inhere\\process\\" : "src/"
+    }
+  },
+  "suggest": {
+    "inhere/simple-print-tool": "Very lightweight data printing tools"
+  }
+}
