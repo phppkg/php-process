@@ -6,14 +6,14 @@
  * Time: 下午6:47
  */
 
-namespace inhere\process;
+namespace Inhere\Process;
 
 use inhere\library\helpers\CliHelper;
 use inhere\library\helpers\FormatHelper;
 
 /**
  * Class ProcessLogger
- * @package inhere\process
+ * @package Inhere\Process
  */
 class ProcessLogger implements ProcessLogInterface
 {

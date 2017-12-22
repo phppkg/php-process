@@ -6,11 +6,11 @@
  * Time: 18:17
  */
 
-namespace inhere\process;
+namespace Inhere\Process;
 
 /**
  * Class Manager
- * @package inhere\process
+ * @package Inhere\Process
  */
 class Manager
 {

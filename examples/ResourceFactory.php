@@ -6,11 +6,11 @@
  * Time: 下午11:57
  */
 
-namespace inhere\process\pool;
+namespace Inhere\Process\pool;
 
 /**
  * Class ResourceFactory
- * @package inhere\process\pool
+ * @package Inhere\Process\pool
  */
 class ResourceFactory implements ResourceInterface
 {

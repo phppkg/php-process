@@ -6,11 +6,11 @@
  * Time: 18:17
  */
 
-namespace inhere\process;
+namespace Inhere\Process;
 
 /**
  * Class Process
- * @package inhere\process
+ * @package Inhere\Process
  */
 class Process
 {
@@ -56,7 +56,7 @@ class Process
             throw new \RuntimeException('Fork child process failed!', __LINE__);
         }
 
-        return $pid
+        return $pid;
     }
 
     public static function wait($blocking = true)
@@ -81,7 +81,7 @@ class Process
 
     public static function kill($pid, $signal)
     {
-        return posix_kill($pid, $signal)
+        return posix_kill($pid, $signal);
     }
 
     public function exec($cmd, array $args = [])
@@ -107,7 +107,7 @@ class Process
 
     public function exit($status=0)
     {
-        exit((int)$status)
+        exit((int)$status);
     }
 
     // public function closePipe()

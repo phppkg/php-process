@@ -6,14 +6,14 @@
  * Time: 23:52
  */
 
-namespace inhere\process;
+namespace Inhere\Process;
 
 use inhere\library\helpers\CliHelper;
 use inhere\library\helpers\PhpHelper;
 
 /**
  * Class ProcessUtil
- * @package inhere\process
+ * @package Inhere\Process
  */
 class ProcessUtil
 {

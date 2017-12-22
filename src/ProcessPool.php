@@ -6,11 +6,11 @@
  * Time: 18:17
  */
 
-namespace inhere\process;
+namespace Inhere\Process;
 
 /**
  * Class ProcessPool
- * @package inhere\process
+ * @package Inhere\Process
  */
 class ProcessPool
 {

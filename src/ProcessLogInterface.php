@@ -6,7 +6,7 @@
  * Time: 9:49
  */
 
-namespace inhere\process;
+namespace Inhere\Process;
 
 /**
  * Interface ProcessLogInterface
