@@ -12,7 +12,7 @@ namespace Inhere\Process\IPC;
  * class SharedMemory
  * @package Inhere\Process\IPC
  */
-class SharedMemory extends BaseIpc
+class SharedMemory extends AbstractIpc
 {
 
 }

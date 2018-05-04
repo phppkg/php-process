@@ -12,7 +12,7 @@ namespace Inhere\Process\IPC;
  * Class NamedPipe
  * @package Inhere\Process\IPC
  */
-class NamedPipe extends BaseIpc
+class NamedPipe extends AbstractIpc
 {
     /**
      * pipe Handle
@@ -23,7 +23,7 @@ class NamedPipe extends BaseIpc
     /**
      * @return bool
      */
-    protected function createPipe()
+    protected function createPipe(): bool
     {
         if (!$this->config['enablePipe']) {
             return false;

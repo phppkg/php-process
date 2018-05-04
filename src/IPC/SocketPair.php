@@ -12,7 +12,7 @@ namespace Inhere\Process\IPC;
  * class SocketPair
  * @package Inhere\Process\IPC
  */
-class SocketPair extends BaseIpc
+class SocketPair extends AbstractIpc
 {
     public function create()
     {

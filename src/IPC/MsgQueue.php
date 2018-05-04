@@ -12,7 +12,7 @@ namespace Inhere\Process\IPC;
  * class MsgQueue
  * @package Inhere\Process\IPC
  */
-class MsgQueue extends BaseIpc
+class MsgQueue extends AbstractIpc
 {
 
 }

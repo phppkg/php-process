@@ -14,7 +14,7 @@ use Inhere\Library\Traits\LiteConfigTrait;
  * Class BaseIpc
  * @package Inhere\Process\IPC
  */
-abstract class BaseIpc
+abstract class AbstractIpc
 {
     use LiteConfigTrait;
 

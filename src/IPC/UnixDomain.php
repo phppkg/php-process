@@ -12,7 +12,7 @@ namespace Inhere\Process\IPC;
  * class UnixDomain
  * @package Inhere\Process\IPC
  */
-class UnixDomain extends BaseIpc
+class UnixDomain extends AbstractIpc
 {
     protected function create()
     {
