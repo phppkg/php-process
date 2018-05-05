@@ -8,6 +8,9 @@
 
 namespace Inhere\Process;
 
+use Toolkit\PhpUtil\Php;
+use Toolkit\Sys\ProcessUtil;
+
 /**
  * Class Process
  * @package Inhere\Process
@@ -24,7 +27,7 @@ class Process
     protected $lifetime = 0;
     protected $options = [];
 
-    public static function create(callable $handler, array $options = [])
+    public static function create(callable $handler, array $options = []): Process
     {
         return new self($handler);
     }
@@ -35,7 +38,7 @@ class Process
         $this->options = $options;
     }
 
-    public function start($id = 0)
+    public function start($id = 0): int
     {
         $this->id = (int)$id;
         $this->started = true;
@@ -49,7 +52,7 @@ class Process
             $this->pid = getmypid();
 
             if ($this->handler) {
-                call_user_func($this->handler, $this);
+                Php::call($this->handler, $this);
             }
 
         } else {
@@ -59,7 +62,7 @@ class Process
         return $pid;
     }
 
-    public static function wait($blocking = true)
+    public function wait($blocking = true): int
     {
         $code = 0;
         while (!$this->stop) {
@@ -79,12 +82,17 @@ class Process
         return $code;
     }
 
-    public static function kill($pid, $signal)
+    /**
+     * @param int $pid
+     * @param bool $force
+     * @return bool
+     */
+    public static function kill(int $pid, bool $force = false): bool
     {
-        return posix_kill($pid, $signal);
+        return ProcessUtil::kill($pid, $force);
     }
 
-    public function exec($cmd, array $args = [])
+    public function exec($cmd, array $args = []): string
     {
         return exec($cmd, $args);
     }
@@ -94,18 +102,7 @@ class Process
         # code...
     }
 
-    /**
-     * install signal
-     * @param  int   $sigal  e.g: SIGTERM SIGINT(Ctrl+C) SIGUSR1 SIGUSR2 SIGHUP
-     * @param  callable $handler
-     * @return bool
-     */
-    public function signal($sigal, callable $handler)
-    {
-       return pcntl_signal($sigal, $handler, false);
-    }
-
-    public function exit($status=0)
+    public function exit($status = 0)
     {
         exit((int)$status);
     }

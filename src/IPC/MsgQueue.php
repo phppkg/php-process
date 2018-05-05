@@ -12,7 +12,16 @@ namespace Inhere\Process\IPC;
  * class MsgQueue
  * @package Inhere\Process\IPC
  */
-class MsgQueue extends AbstractIpc
+class MsgQueue extends AbstractIPC
 {
+    /** @var string  */
+    protected static $name = 'msgQueue';
 
+    /**
+     * @return bool
+     */
+    public static function isSupported(): bool
+    {
+        // TODO: Implement isSupported() method.
+    }
 }

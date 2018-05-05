@@ -109,7 +109,7 @@ class ProcessLogger implements ProcessLogInterface
             $this->toSyslog = true;
         }
 
-        if ($this->spiltType && !in_array($this->spiltType, [self::SPLIT_DAY, self::SPLIT_HOUR], true)) {
+        if ($this->spiltType && !\in_array($this->spiltType, [self::SPLIT_DAY, self::SPLIT_HOUR], true)) {
             $this->spiltType = self::SPLIT_DAY;
         }
 
@@ -152,7 +152,7 @@ class ProcessLogger implements ProcessLogInterface
      * @param array $data
      * @return bool
      */
-    public function log($msg, $level = self::INFO, array $data = [])
+    public function log($msg, $level = self::INFO, array $data = []): bool
     {
         if ($level > $this->level) {
             return true;
@@ -190,7 +190,7 @@ class ProcessLogger implements ProcessLogInterface
     /**
      * flush
      */
-    public function flush()
+    public function flush(): bool
     {
         if (!$this->cache) {
             return true;
@@ -213,7 +213,7 @@ class ProcessLogger implements ProcessLogInterface
         return true;
     }
 
-    protected function fileIsChanged()
+    protected function fileIsChanged(): bool
     {
         if (!$this->fileHandle || !($file = $this->file)) {
             return false;
@@ -285,7 +285,7 @@ class ProcessLogger implements ProcessLogInterface
      * @param bool $createDir
      * @return string
      */
-    public function genLogFile($createDir = false)
+    public function genLogFile($createDir = false): string
     {
         // log split type
         if (!($type = $this->spiltType) || !($file = $this->file)) {
@@ -309,7 +309,7 @@ class ProcessLogger implements ProcessLogInterface
     /**
      * @return string
      */
-    public function getLogFileDate()
+    public function getLogFileDate(): string
     {
         $str = '';
 
@@ -350,7 +350,7 @@ class ProcessLogger implements ProcessLogInterface
      * @param int $level
      * @return bool
      */
-    protected function sysLog($msg, $level)
+    protected function sysLog($msg, $level): bool
     {
         switch ($level) {
             case self::EMERG:
@@ -383,7 +383,7 @@ class ProcessLogger implements ProcessLogInterface
     /**
      * @return array
      */
-    public static function getLevels()
+    public static function getLevels(): array
     {
         return self::$levels;
     }
@@ -392,7 +392,7 @@ class ProcessLogger implements ProcessLogInterface
      * getFile
      * @return string
      */
-    public function getFile()
+    public function getFile(): string
     {
         return $this->file;
     }

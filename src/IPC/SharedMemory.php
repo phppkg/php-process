@@ -12,7 +12,16 @@ namespace Inhere\Process\IPC;
  * class SharedMemory
  * @package Inhere\Process\IPC
  */
-class SharedMemory extends AbstractIpc
+class SharedMemory extends AbstractIPC
 {
+    /** @var string  */
+    protected static $name = 'sharedMemory';
 
+    /**
+     * @return bool
+     */
+    public static function isSupported(): bool
+    {
+        // TODO: Implement isSupported() method.
+    }
 }

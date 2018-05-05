@@ -28,7 +28,7 @@ class InstantTask
         return $this;
     }
 
-    public function getWorkerNum()
+    public function getWorkerNum(): int
     {
         return $this->workerNum;
     }

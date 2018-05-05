@@ -9,15 +9,16 @@
 namespace Inhere\Process\IPC;
 
 /**
- * Class IpcFactory
+ * Class IPCFactory
  * @package Inhere\Process\IPC
  */
-class IpcFactory
+class IPCFactory
 {
-    const TYPE_PIPE = 'pipe';
-    const TYPE_MQ   = 'mq'; // message queue
-    const TYPE_SM   = 'sm'; // shared memory
-    const TYPE_SOCK  = 'sock';
+    const TYPE_PIPE = 'namedPipe'; // named pipe
+    const TYPE_MQ = 'mq'; // message queue
+    const TYPE_SEM = 'sem'; // Semaphore
+    const TYPE_SHM = 'shm'; // shared memory
+    const TYPE_SOCK = 'sock'; // sockets
 
     /**
      * @var resource
@@ -88,12 +89,12 @@ class IpcFactory
     /**
      * @return bool
      */
-    protected function createPipe()
+    protected function createPipe(): bool
     {
         //创建管道
         $pipeFile = "/tmp/{$this->config['name']}.pipe";
 
-        if(!file_exists($pipeFile) && !posix_mkfifo($pipeFile, 0666)){
+        if (!file_exists($pipeFile) && !posix_mkfifo($pipeFile, 0666)) {
             throw new \RuntimeException("Create the pipe failed! PATH: $pipeFile", -200);
         }
 

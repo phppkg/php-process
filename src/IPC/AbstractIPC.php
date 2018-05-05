@@ -11,12 +11,15 @@ namespace Inhere\Process\IPC;
 use Inhere\Library\Traits\LiteConfigTrait;
 
 /**
- * Class BaseIpc
+ * Class BaseIPC
  * @package Inhere\Process\IPC
  */
-abstract class AbstractIpc
+abstract class AbstractIPC implements IPCInterface
 {
     use LiteConfigTrait;
+
+    /** @var string The driver name */
+    protected static $name = '';
 
     /**
      * @var string
@@ -55,9 +58,16 @@ abstract class AbstractIpc
     /**
      * MsgQueue constructor.
      * @param array $config
+     * @throws \RuntimeException
      */
     public function __construct(array $config = [])
     {
+        if (!static::isSupported()) {
+            throw new \RuntimeException(
+                \sprintf('Driver %s is not supported in the current environment!', static::$name)
+            );
+        }
+
         $this->setConfig($config);
 
         $this->init();
@@ -73,5 +83,13 @@ abstract class AbstractIpc
         if (isset($this->config['id'])) {
             $this->id = $this->config['id'];
         }
+    }
+
+    /**
+     * @return string
+     */
+    public static function getName(): string
+    {
+        return self::$name;
     }
 }
