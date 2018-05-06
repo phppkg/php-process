@@ -8,7 +8,7 @@
 
 namespace Inhere\Process\IPC;
 
-use Inhere\Library\Traits\LiteConfigTrait;
+use Toolkit\PhpUtil\Php;
 
 /**
  * Class BaseIPC
@@ -16,15 +16,8 @@ use Inhere\Library\Traits\LiteConfigTrait;
  */
 abstract class AbstractIPC implements IPCInterface
 {
-    use LiteConfigTrait;
-
     /** @var string The driver name */
     protected static $name = '';
-
-    /**
-     * @var string
-     */
-    protected $driver;
 
     /**
      * The queue id(name)
@@ -32,15 +25,17 @@ abstract class AbstractIPC implements IPCInterface
      */
     protected $id;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $errCode = 0;
 
-    /**
-     * @var string
-     */
-    protected $errMsg;
+    /** @var string */
+    protected $errMsg = '';
+
+    /** @var bool Clear on exit */
+    protected $clearOnExit = false;
+
+    /** @var int The read/write buffer size. */
+    protected $bufferSize = 8096;
 
     /**
      * @var array
@@ -68,9 +63,27 @@ abstract class AbstractIPC implements IPCInterface
             );
         }
 
-        $this->setConfig($config);
+        Php::initObject($this, $config);
 
         $this->init();
+    }
+
+    public function __destruct()
+    {
+        if ($this->clearOnExit) {
+            $this->clear();
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function clear(): bool
+    {
+        $this->errCode = 0;
+        $this->errMsg = '';
+
+        return true;
     }
 
     /**
@@ -91,5 +104,53 @@ abstract class AbstractIPC implements IPCInterface
     public static function getName(): string
     {
         return self::$name;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isClearOnExit(): bool
+    {
+        return $this->clearOnExit;
+    }
+
+    /**
+     * @param bool $clearOnExit
+     */
+    public function setClearOnExit($clearOnExit)
+    {
+        $this->clearOnExit = (bool)$clearOnExit;
+    }
+
+    /**
+     * @return int
+     */
+    public function getErrCode(): int
+    {
+        return $this->errCode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getErrMsg(): string
+    {
+        return $this->errMsg;
+    }
+
+    /**
+     * @return int
+     */
+    public function getBufferSize(): int
+    {
+        return $this->bufferSize;
+    }
+
+    /**
+     * @param int $bufferSize
+     */
+    public function setBufferSize(int $bufferSize)
+    {
+        $this->bufferSize = $bufferSize;
     }
 }

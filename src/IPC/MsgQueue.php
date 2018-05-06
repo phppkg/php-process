@@ -18,6 +18,26 @@ class MsgQueue extends AbstractIPC
     protected static $name = 'msgQueue';
 
     /**
+     * @var string
+     */
+    protected $msgKey = '';
+
+    private $handle;
+
+    protected function init()
+    {
+        parent::init();
+
+        if ($this->msgKey) {
+            $this->msgKey = (int)$this->msgKey;
+        } else {
+            $this->msgKey = ftok(__FILE__, 0);
+        }
+
+        $this->handle = msg_get_queue($this->msgKey);
+    }
+
+    /**
      * @return bool
      */
     public static function isSupported(): bool

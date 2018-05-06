@@ -19,13 +19,25 @@ class NamedPipe extends AbstractIPC
     protected static $name = 'namedPipe';
 
     /**
-     * pipe Handle
+     * pipe handle for write
      * @var resource
      */
-    protected $pipe;
+    protected $writePipe;
+
+    /**
+     * pipe handle for read
+     * @var resource
+     */
+    protected $readPipe;
+
+    /** @var string  */
+    protected $pipeFile = '/tmp/php-ipc.pipe';
+
+    /** @var bool */
+    protected $blocking = true;
 
     private $input = [
-        'handle' => null,
+        'handle' => '/tmp/php-ipc.pipe',
         'mode' => 0660,
         'name' => '',
         'use' => 'r',
@@ -41,45 +53,83 @@ class NamedPipe extends AbstractIPC
     /**
      * @return bool
      */
+    public function isBlocking(): bool
+    {
+        return $this->blocking;
+    }
+
+    /**
+     * @param bool $blocking
+     */
+    public function setBlocking($blocking)
+    {
+        $this->blocking = (bool)$blocking;
+    }
+
+    /**
+     * @return bool
+     * @throws \RuntimeException
+     */
     protected function createPipe(): bool
     {
-        if (!$this->config['enablePipe']) {
-            return false;
-        }
-
         //创建管道
         $pipeFile = "/tmp/{$this->name}.pipe";
 
         if (!\file_exists($pipeFile) && !\posix_mkfifo($pipeFile, 0666)) {
-            $this->stderr("Create the pipe failed! PATH: $pipeFile");
+            throw new \RuntimeException("Create the pipe failed! PATH: $pipeFile");
         }
 
-        $this->pipe = \fopen($pipeFile, 'wrb');
-        \stream_set_blocking($this->pipe, false);  //设置成读取非阻塞
+        $this->readPipe = \fopen($pipeFile, 'rb');
+        $this->writePipe = \fopen($pipeFile, 'wb');
+
+        // mode - false 设置成读取非阻塞 true 设置成读取阻塞
+        \stream_set_blocking($this->readPipe, $this->blocking);  //设置成读取非阻塞
 
         return true;
     }
 
-    public function receive(): string
+    /**
+     * @param int $size
+     * @return string
+     */
+    public function receive(int $size = 0): string
     {
-        return $this->readMessage();
+        if ($size <= 0) {
+            return $this->readAll();
+        }
+
+        return $this->read();
     }
 
     /**
      * @param int $bufferSize
      * @return string
      */
-    protected function readMessage(int $bufferSize = 2048): string
+    protected function read(int $bufferSize = 2048): string
     {
-        if (!$this->pipe) {
+        if (!$this->readPipe) {
             return false;
         }
 
         // 读取管道数据
-        return \fread($this->pipe, $bufferSize);
+        return \fread($this->readPipe, $bufferSize);
     }
 
-    public function send(string $data)
+    /**
+     * @return string
+     */
+    public function readAll(): string
+    {
+        $data = '';
+
+        while (!\feof($this->readPipe)) {
+            $data .= \fread($this->readPipe, 1024);
+        }
+
+        return $data;
+    }
+
+    public function send(string $data): bool
     {
         return $this->sendMessage($data);
     }
@@ -87,21 +137,33 @@ class NamedPipe extends AbstractIPC
     /**
      * @param string $command
      * @param string|array $data
-     * @return bool|int
+     * @return bool
      */
-    protected function sendMessage(string $command, $data = null)
+    protected function sendMessage(string $command, $data = null): bool
     {
-        if (!$this->pipe) {
+        if (!$this->writePipe) {
             return false;
         }
 
         // 写入数据到管道
-        $len = fwrite($this->pipe, \json_encode([
+        $len = fwrite($this->writePipe, \json_encode([
             'command' => $command,
             'data' => $data,
         ]));
 
-        return $len;
+        return $len !== false;
+    }
+
+
+    public function closePipe()
+    {
+        if ($this->writePipe) {
+            \fclose($this->writePipe);
+        }
+
+        if ($this->readPipe) {
+            \fclose($this->readPipe);
+        }
     }
 
     /**

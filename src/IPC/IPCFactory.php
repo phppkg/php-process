@@ -14,7 +14,7 @@ namespace Inhere\Process\IPC;
  */
 class IPCFactory
 {
-    const TYPE_PIPE = 'namedPipe'; // named pipe
+    const TYPE_PIPE = 'pipe'; // named pipe
     const TYPE_MQ = 'mq'; // message queue
     const TYPE_SEM = 'sem'; // Semaphore
     const TYPE_SHM = 'shm'; // shared memory
@@ -45,45 +45,48 @@ class IPCFactory
         'blocking' => true,
     ];
 
+    const DRIVERS = [
+        'pipe' => NamedPipe::class,
+        'mq' => MsgQueue::class,
+        'shm' => SharedMemory::class,
+        'sock' => SocketPair::class,
+        'domain' => UnixDomain::class,
+    ];
+
     /**
-     * IPC constructor.
      * @param array $config
+     * @return IPCInterface
+     * @throws \RuntimeException
      */
-    public function __construct(array $config = [])
+    public static function create(array $config = []): IPCInterface
     {
-        $this->setConfig($config);
+        $driver = '';
 
-        switch ($this->config['type']) {
-            case self::TYPE_MQ:
-
-                break;
-            case self::TYPE_SOCK:
-                break;
-
-            case self::TYPE_PIPE:
-            default:
-
-                break;
-        }
-    }
-
-    public function write($data)
-    {
-        if ($this->config['msgKey']) {
-            $this->config['msgKey'] = (int)$this->config['msgKey'];
-        } else {
-            $this->config['msgKey'] = ftok(__FILE__, 0);
+        if (isset($config['driver']) && ($name = $config['driver'])) {
+            if (\strpos($name, '\\') && \class_exists($name)) {
+                $driver = $name;
+            } elseif (isset(self::DRIVERS[$name])) {
+                $driver = self::DRIVERS[$name];
+            }
         }
 
-        $this->handle = msg_get_queue($this->config['msgKey']);
-    }
+        // auto select
+        if (!$driver) {
+            /** @var IPCInterface $class */
+            foreach (self::DRIVERS as $class) {
+                if ($class::isSupported()) {
+                    $driver = $class;
+                    break;
+                }
+            }
 
-    /**
-     * @return bool
-     */
-    protected function createMsgQueue()
-    {
+            // not available
+            if (!$driver) {
+                throw new \RuntimeException('No available IPC driver for current environment!');
+            }
+        }
 
+        return new $driver($config);
     }
 
     /**
@@ -105,21 +108,4 @@ class IPCFactory
         return true;
     }
 
-    protected function createShareMemory()
-    {
-
-    }
-
-    protected function createSockPair()
-    {
-        // @link http://php.net/manual/zh/function.socket-create-pair.php
-    }
-
-    protected function createSockDomain()
-    {
-        // $socket = socket_create(AF_UNIX, SOCK_STREAM, SOL_TCP);
-        $socket = socket_create(AF_UNIX, SOCK_DGRAM, SOL_UDP);
-        $bindRes = socket_bind($socket, $this->socketfile);
-        $listenRes = socket_listen($socket, 9999);
-    }
 }

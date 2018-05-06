@@ -14,9 +14,24 @@ namespace Inhere\Process\IPC;
  */
 interface IPCInterface
 {
-    public function receive(): string;
+    /**
+     * @param int $size
+     * <= 0 Read all data
+     * > 0 Read data of this size
+     * @return string
+     */
+    public function receive(int $size = 0): string;
 
-    public function send(string $data);
+    /**
+     * @param string $data
+     * @return bool
+     */
+    public function send(string $data): bool;
+
+    /**
+     * @return bool
+     */
+    public function clear(): bool;
 
     /**
      * @return bool
